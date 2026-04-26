@@ -27,31 +27,37 @@ services:
     dockerfilePath: ./ai-healthos-backend/Dockerfile
     healthCheckPath: /actuator/health
     envVars:
+
+      # ✅ Correct DB URL
       - key: SPRING_DATASOURCE_URL
         fromService:
           name: ai-healthos-mysql
           type: pserv
-          property: hostport
-        value: jdbc:mysql://${hostport}/ai_healthos?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+          property: connectionString
+
+      # ✅ manually set username
       - key: SPRING_DATASOURCE_USERNAME
-        fromService:
-          name: ai-healthos-mysql
-          type: pserv
-          property: user
+        value: aihealthos
+
+      # ✅ password from env
       - key: SPRING_DATASOURCE_PASSWORD
         fromService:
           name: ai-healthos-mysql
           type: pserv
-          property: password
+          envVarKey: MYSQL_PASSWORD
+
       - key: AI_SERVICE_URL
         fromService:
           name: ai-healthos-ai-service
           type: web
           property: url
+
       - key: AI_SERVICE_API_KEY
         sync: false
+
       - key: JWT_SECRET
         generateValue: true
+
       - key: STORAGE_PATH
         value: /app/uploads
 
@@ -68,7 +74,7 @@ services:
       - key: PORT
         value: 8000
 
-  # Frontend (Static Site)
+  # Frontend
   - type: web
     name: ai-healthos-frontend
     env: static
