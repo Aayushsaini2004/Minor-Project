@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: ai-healthos-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ai_healthos
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ai-healthos-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./ai-healthos-backend
+      dockerfile: Dockerfile
+    container_name: ai-healthos-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ai_healthos?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      AI_SERVICE_URL: http://ai-service:8000
+      AI_SERVICE_API_KEY: ai-service-secret-key
+      JWT_SECRET: mySecretKey123456789012345678901234567890
+      STORAGE_PATH: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - ai-healthos-network
+
+  # Python AI Service
+  ai-service:
+    build:
+      context: ./ai-healthos-ai-service
+      dockerfile: Dockerfile
+    container_name: ai-healthos-ai-service
+    restart: unless-stopped
+    environment:
+      API_KEY: ai-service-secret-key
+      HOST: 0.0.0.0
+      PORT: 8000
+      DEBUG: "false"
+      ENABLE_MOCK_MODELS: "true"
+    ports:
+      - "8000:8000"
+    networks:
+      - ai-healthos-network
+
+  # Frontend
+  frontend:
+    image: nginx:alpine
+    container_name: ai-healthos-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./ai-healthos-frontend/dist:/usr/share/nginx/html
+    depends_on:
+      - backend
+    networks:
+      - ai-healthos-network
+
+volumes:
+  mysql_data:
+  uploads_data:
+
+networks:
+  ai-healthos-network:
+    driver: bridge

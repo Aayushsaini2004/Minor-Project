@@ -1,0 +1,47 @@
+body {
+  background: #0f172a;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+}
+
+.container {
+  margin-top: 20px;
+}
+
+#avatar {
+  width: 150px;
+  border-radius: 50%;
+  margin: 10px;
+  transition: transform 0.2s;
+}
+
+.talking {
+  transform: scale(1.1);
+}
+
+#chat-box {
+  height: 250px;
+  width: 350px;
+  margin: auto;
+  overflow-y: auto;
+  background: #020617;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+input {
+  padding: 8px;
+  width: 200px;
+}
+
+button {
+  padding: 8px;
+  background: #22c55e;
+  border: none;
+  cursor: pointer;
+}

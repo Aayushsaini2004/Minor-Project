@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+**/target/
+build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Uploads (contains user data)
+uploads/
+ai-healthos-backend/uploads/
+
+# Database files
+*.db
+*.sqlite
+
+# Package files
+*.tar.gz
+*.zip
+
+# Docker
+docker-compose.override.yml
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Vite
+.vite/
+
+# Testing
+coverage/
+.nyc_output/

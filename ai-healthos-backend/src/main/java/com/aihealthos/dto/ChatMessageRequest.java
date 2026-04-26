@@ -1,0 +1,19 @@
+package com.aihealthos.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class ChatMessageRequest {
+    
+    @NotNull(message = "Appointment ID is required")
+    private Long appointmentId;
+    
+    @NotBlank(message = "Message is required")
+    private String message;
+
+    public Long getAppointmentId() { return appointmentId; }
+    public void setAppointmentId(Long appointmentId) { this.appointmentId = appointmentId; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+}
